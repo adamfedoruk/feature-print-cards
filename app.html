@@ -18,7 +18,7 @@
             function displayCards(results) {
                 console.log(results);
                 var estimate, loginName, ownerClass, storyId, taskId, description,
-                        i, name, theMarkup, data, userTable, ownerText, parent;
+                        i, name, theMarkup, data, userTable, ownerText, parent, planStart, planEnd;
         
                 userTable = buildUserTable(results.users);
         
@@ -68,12 +68,26 @@
                     else {
                             parent = "None"
                         }
-        
+
+                    if (data[i].PlannedStartDate){
+                        planStart = data[i].PlannedStartDate;
+                    }
+                    else {
+                            planStart = "None"
+                        }
+
+                    if (data[i].PlannedEndDate){
+                        planEnd = data[i].PlannedEndDate;
+                    }
+                    else {
+                            planEnd = "None"
+                        }
+                      // trim description
                     // description = data[i].Description.slice(0,240);
-                    description = data[i].Description.slice(0,1024);
+                    description = data[i].Description.slice(0,150);
         
                     theMarkup = createMarkup(i, data.length, name, ownerText, ownerClass, description,
-                            storyId, taskId, estimate, parent);
+                            storyId, taskId, estimate, parent, planStart, planEnd);
         
                     dojo.byId("cards").innerHTML += theMarkup;
                 }
@@ -97,7 +111,7 @@
                 }
             }
         
-            function createMarkup(cardNum, totalCards, name, ownerText, ownerClass, description, storyId, taskId, estimate, parent) {
+            function createMarkup(cardNum, totalCards, name, ownerText, ownerClass, description, storyId, taskId, estimate, parent, planStart, planEnd) {
                 var theMarkup, id;
                 if (CARD_TYPE === 'stories') {
                     id = storyId;
@@ -110,16 +124,19 @@
                                 '<div class="header">' +
                                 '<span class="parent">' + parent + '</span>' +
                                 '<span class="storyID">' + id + '</span>' +
-                                '<span class="owner ' + ownerClass + '">' + '</span>' +
-                                '<span class="ownerText">' + ownerText + '</span>' +
-                                '</div>' +
-                                '<div class="content">' +
-                                '<div class="card-title">' + name + '</div>' +
-                                '<div class="description">' + description + '</div>' +
-                                '</div>' +
-                                '<span class="estimate">' + estimate + '</span>' +
-                                '</div>';
+                                          '<span class="owner ' + ownerClass + '">' + '</span>' + //REMOVE OWNER TO REPLACE WITH TEAM   
+                                           '<span class="ownerText">' + ownerText + '</span>' + //REMOVE OWNER TO REPLACE WITH TEAM
+                                    '</div>' +
                                 
+                                '<div class="content">' +
+                                    '<div class="card-title">' + name + '</div>' +
+                                        '<div class="description">' + description + '</div>' +
+                                            '</div>' +
+                                        '<span class="estimate">' + estimate + '</span>' +
+                                        '<span class="planStart">' + "Start: " + planStart +  '</span>' +
+                                        '<span class="planEnd">' + " End:" + planEnd +  '</span>' +
+                                        '</div>';
+                               
         
                 if (Math.ceil((cardNum + 1) % 4) === 0) {
                     theMarkup = theMarkup + '<div class=pb></div>';
@@ -167,7 +184,7 @@
                     key: CARD_TYPE,
                     type: 'PortfolioItem',
                     query: query,
-                    fetch: 'Name,Iteration,Owner,FormattedID,PlanEstimate,ObjectID,Description,UserName,Children,PreliminaryEstimate,Parent',
+                    fetch: 'Name,Iteration,Owner,FormattedID,PlanEstimate,ObjectID,Description,UserName,Children,PreliminaryEstimate,Parent,PlannedStartDate,PlannedEndDate',
                     order: 'Rank'
                 };
                 queryArray[1] = {
@@ -306,7 +323,7 @@
                 margin: 0.1in 0.1in 0.1in 0.1in;
                 position: relative;
                 overflow: hidden;
-                width: 4.5in;
+                width: 8in;
             }
  
             .header {
@@ -333,10 +350,15 @@
                 overflow: hidden;
             }
  
-            .owner {
-                float: right;
-                height:40px;
+            .planStart {
+                bottom: 0.5em;
+                right: 0.5em;
             }
+
+            .planEnd {
+                float: left;
+                bottom: 0.5em;
+                right: 0.5em;
  
             .ownerText {
                 float: right;
