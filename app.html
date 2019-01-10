@@ -16,18 +16,18 @@
         function PrintStoryCards(rallyDataSource) {
         
             function displayCards(results) {
-               console.log(results);
+                console.log(results);
                 var estimate, loginName, ownerClass, storyId, taskId, description,
-                        i, name, theMarkup, data, userTable, ownerText;
+                        i, name, theMarkup, data, userTable, ownerText, parent;
         
                 userTable = buildUserTable(results.users);
         
                 data = results[CARD_TYPE];
         
                 for (i = 0; i < data.length; i++) {
-                                                                                // dont show epics
-                              if ((data[i].Children != null) && (data[i].Children.length > 0))
-                                              continue;
+                    // dont show epics
+                    if ((data[i].Children != null) && (data[i].Children.length > 0))
+                        continue;
                     name = data[i].Name;
                     if (name.length > MAX_NAME_LEN) {
                         name = name.substring(0, MAX_NAME_LEN);
@@ -51,9 +51,9 @@
                         taskId = results.tasks[i].FormattedID;
                     }
         
-                                               if (data[i].PreliminaryEstimate) {
-                                                               estimate = data[i].PreliminaryEstimate.Name;
-                                               }
+                    if (data[i].PreliminaryEstimate) {
+                        estimate = data[i].PreliminaryEstimate.Name;
+                    }
                     else if (data[i].PlanEstimate) {
                         estimate = data[i].PlanEstimate;
                     } else if (data[i].Estimate) {
@@ -61,12 +61,19 @@
                     } else {
                         estimate = "None";
                     }
+
+                    if (data[i].Parent){
+                        parent = data[i].Parent.FormattedID;
+                    }
+                    else {
+                            parent = "None"
+                        }
         
                     // description = data[i].Description.slice(0,240);
                     description = data[i].Description.slice(0,1024);
         
                     theMarkup = createMarkup(i, data.length, name, ownerText, ownerClass, description,
-                            storyId, taskId, estimate);
+                            storyId, taskId, estimate, parent);
         
                     dojo.byId("cards").innerHTML += theMarkup;
                 }
@@ -90,7 +97,7 @@
                 }
             }
         
-            function createMarkup(cardNum, totalCards, name, ownerText, ownerClass, description, storyId, taskId, estimate) {
+            function createMarkup(cardNum, totalCards, name, ownerText, ownerClass, description, storyId, taskId, estimate, parent) {
                 var theMarkup, id;
                 if (CARD_TYPE === 'stories') {
                     id = storyId;
@@ -101,6 +108,7 @@
                 theMarkup =
                         '<div class="artifact">' +
                                 '<div class="header">' +
+                                '<span class="parent">' + parent + '</span>' +
                                 '<span class="storyID">' + id + '</span>' +
                                 '<span class="owner ' + ownerClass + '">' + '</span>' +
                                 '<span class="ownerText">' + ownerText + '</span>' +
@@ -111,6 +119,7 @@
                                 '</div>' +
                                 '<span class="estimate">' + estimate + '</span>' +
                                 '</div>';
+                                
         
                 if (Math.ceil((cardNum + 1) % 4) === 0) {
                     theMarkup = theMarkup + '<div class=pb></div>';
@@ -138,7 +147,7 @@
                 
                 var query = "";
                 
-                                                                //Print features instead of stories.
+                //Print features instead of stories.
                 // query = "(PortfolioItemType.Ordinal = 0)";
 
                 console.log("level dropdown",levelDropdown);
@@ -204,13 +213,13 @@
             }
             
             function onDataRetrieved(a, eventArgs) {
-                                                    //Add an "All" option
-                                                    var all = {};
-                                                    all[eventArgs.displayValueProperty] = "Unscheduled";
-                                                   all[eventArgs.valueProperty] = "Unscheduled";
+                //Add an "All" option
+                var all = {};
+                all[eventArgs.displayValueProperty] = "Unscheduled";
+                all[eventArgs.valueProperty] = "Unscheduled";
 
-                                                    eventArgs.items.unshift(all);
-                                                }
+                eventArgs.items.unshift(all);
+            }
         
             this.display = function(){
 
@@ -242,25 +251,25 @@
         }
 
     </script>
-               <style type="text/css" title="printCards">
+    <style type="text/css" title="printCards">
         /* PLEASE LEAVE THIS STYLESHEET INLINE SINCE TITLE IS NECESSARY */
         @media print {
                 #interface {
                     display: none;
                 }
-
+ 
                 .artifact{
                   page-break-inside:avoid;
                     /* page-break-before: always; */
                     /* clear: both; */
                 }
             }
-
+ 
             #buttonDiv,
             #iterationDropdown {
                 display:inline;
             }
-
+ 
             #interface, #printSection {
 
                 margin: 20px;
@@ -270,7 +279,7 @@
                 position: absolute;
                 top : 5px;
             }
-
+ 
             html {
                 background-color: #fff;
                 color: #000;
@@ -278,17 +287,17 @@
                 margin: 0;
                 padding: 0;
             }
-
+ 
             body {
                 background-color: #fff;
                 margin: 0;
                 padding: 0;
             }
-
+ 
             .cb {
                 clear:both;
             }
-
+ 
             .artifact {
                 background-color: #fff;
                 border: 2px solid #000;
@@ -299,7 +308,7 @@
                 overflow: hidden;
                 width: 4.5in;
             }
-
+ 
             .header {
                 border: 1px;
                 border-bottom-style: solid;
@@ -308,13 +317,13 @@
                 vertical-align: middle;
                 width: 4.5in;
             }
-
+ 
             .card-title {
                 font: bold 15px Genova, sans-serif;
                 padding-top: 0.5em;
                 text-align: center;
             }
-
+ 
             .description {
                 float: left;
                 font: 12pt Georgia, sans-serif;
@@ -323,38 +332,45 @@
                 padding-right: 1.0em;
                 overflow: hidden;
             }
-
+ 
             .owner {
                 float: right;
                 height:40px;
             }
-
+ 
             .ownerText {
                 float: right;
                 font: 14pt / 1.26 Arial, Helvetica, sans-serif;
                 margin-right: 0.3em;
                 margin-top: 0.3em;
             }
-
+ 
             .storyID {
                 float: left;
                 font: 14pt / 1.26 Arial, Helvetica, sans-serif;
                 margin-left: 0.25em;
                 margin-top: 0.3em;
             }
-
+ 
             .estimate {
                 bottom: 0.5em;
                 position: absolute;
                 right: 0.5em;
             }
 
+            .parent {
+                float: left;
+                font: 11pt / 1.26 Arial, Helvetica, sans-serif;
+                margin-left: 0.25em;
+                margin-top: 0.3em;
+            }
+ 
             .content {
                 height: 2.0in;
                 overflow: hidden;
                 width: 4.5in;
             }
-
+ 
     </style>
     <script type="text/javascript">
 
