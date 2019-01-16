@@ -91,7 +91,7 @@
                         }
                       // trim description
                     // description = data[i].Description.slice(0,240);
-                    description = data[i].Description.slice(0,244);
+                    description = data[i].Description.slice(0,300);
         
                     theMarkup = createMarkup(i, data.length, name, ownerText, ownerClass, description,
                             storyId, taskId, estimate, parent, planStart, planEnd, project);
@@ -135,22 +135,22 @@
                                           // '<span class="ownerText">' + ownerText + '</span>' + //REMOVE OWNER TO REPLACE WITH TEAM
                            //     '</div>' +
                                 
-                                '<div class="content">' +
+                            '<div class="content">' +
                                 '<span class="parent">' + parent + '</span>' + '<br>' +
-                                    '<div id="storyID">' + id + '</div>' +
-                                    '<span class="project">' + project + '</span>' + '<br>' + 
+                                '<div id="storyID">' + id + '</div>' +
+                               // '<span class="project">' + project + '</span>' + '<br>' + 
                                     
-                                    '<div class="card-title">' + name + '</div>' + 
-                                    '<hr>' +
-                                    '<div class="description">' + description + '</div>' +
-                                
-                                '</div>' + '<br>' +
-                                '<div class ="dates" >'   +
-                                    '<span class="estimate">' + estimate + '</span>' +  '<br>' +
-                                    '<span class="planStart">' + "Start: " + planStart +  '</span>' + '<br>' +
-                                    '<span class="planEnd">' + " End:" + planEnd +  '</span>' +
-                                         '</div>' +
-                                        '</div>';
+                                '<div class="card-title">' + name + '</div>' + '<hr>' +
+                                '<div class="description">' + description + '</div>' +
+                            '</div>' + '<br>' +'<hr>' +
+                            
+                            '<div class ="dates">' +
+                                '<div class="planStart">' + "Start: " + planStart +  '</div>' + '<br>' +
+                                '<div class="planEnd">' + " End:" + planEnd +  '</div>' + '<br>' +'<hr>' +
+                                '<div class="estimate">' + estimate + '</div>' +  '<br>' +
+                            '</div>' +
+                        
+                        '</div>';
                                
         
                 if (Math.ceil((cardNum + 1) % 4) === 0) {
@@ -338,7 +338,7 @@
                 margin: 0.1in 0.1in 0.1in 0.1in;
                 position: relative;
                 overflow: hidden;
-                width: 4.5in;
+                width: 5in;
             }
  
             .header {
@@ -347,7 +347,7 @@
                 display: table-cell;
                 height: 30px;           /* 30 original */
                 vertical-align: middle;
-                width: 4.5in;
+                width: 5in;
             }
  
             .card-title {
@@ -392,9 +392,9 @@
  
             .estimate {
                 bottom: 0.5em;
-                position: absolute;
-                right: 0.5em;
+                position: right;
                 font-size: bold 14pt / 1.26 Arial, Helvetica, sans-serif;
+                margin-left: 0.3em;
             }
 
             .parent {
